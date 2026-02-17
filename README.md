@@ -2,6 +2,31 @@
 
 Sync your Cursor/Codex skills across machines with GitHub.
 
+## Quick setup (one command)
+
+**macOS / Linux**
+
+```bash
+git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
+cd cursor-skills-sync
+chmod +x ./setup.sh
+./setup.sh
+```
+
+Then **restart Cursor**. Skills from this repo are now active.
+
+**Windows (PowerShell)**
+
+```powershell
+git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
+cd cursor-skills-sync
+.\setup.ps1
+```
+
+Then **restart Cursor**.
+
+---
+
 ## What this repo contains
 
 - `cursor/skills/` -> custom Cursor skills
@@ -17,31 +42,13 @@ Sync your Cursor/Codex skills across machines with GitHub.
 - Use this flow: capture idea in `learning/*` -> validate in real work -> promote to `skills/*`.
 
 Quick rule:
+
 - If the idea is new/unproven, store it in `learning/*`.
 - If the idea is stable/reusable, convert it into a skill.
 
 ## Restore on another machine
 
-### macOS / Linux
-
-```bash
-git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
-cd cursor-skills-sync
-chmod +x ./sync.sh
-./sync.sh to-local
-```
-
-Then restart Cursor.
-
-### Windows (PowerShell)
-
-```powershell
-git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
-cd cursor-skills-sync
-.\sync.ps1 to-local
-```
-
-Then restart Cursor.
+Use the **Quick setup** above (`./setup.sh` or `.\setup.ps1`). Or manually: run `./sync.sh to-local` (or `.\sync.ps1 to-local`) from this repo, then restart Cursor.
 
 ## Update this repo after local changes
 
@@ -74,6 +81,7 @@ chmod +x ./scripts/installHooks.sh
 ```
 
 What you get:
+
 - `pre-commit`: runs `scripts/validateSkills.sh`
 - `post-commit`: reminds you to push after `SKILL.md` changes
 - GitHub Action (`skills-guard`): validates skills on push/PR
@@ -137,6 +145,7 @@ chmod +x ./record-learning.sh
 See `LEARNING-FLOW.md` for the full daily/weekly process.
 
 Built-in behavior:
+
 - no duplicate entries (same source+title+details)
 - every new entry starts as `status: pending`
 - reminder when pending entries reach threshold (default: 5, configurable with `learningReviewThrasholder`)
@@ -147,4 +156,3 @@ Built-in behavior:
 2. Create/update a folder under `cursor/skills/` or `cursor/skills-cursor/`.
 3. Add or update `SKILL.md` with clear instructions and examples.
 4. Commit and push.
-

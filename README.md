@@ -64,6 +64,20 @@ git commit -m "chore: sync local skills"
 git push
 ```
 
+## Git hooks and CI guard
+
+Install local hooks once per machine:
+
+```bash
+chmod +x ./scripts/installHooks.sh
+./scripts/installHooks.sh
+```
+
+What you get:
+- `pre-commit`: runs `scripts/validateSkills.sh`
+- `post-commit`: reminds you to push after `SKILL.md` changes
+- GitHub Action (`skills-guard`): validates skills on push/PR
+
 ## Learning flow (manual vs generated)
 
 Track daily improvements without mixing the source:
@@ -88,7 +102,7 @@ See `LEARNING-FLOW.md` for the full daily/weekly process.
 Built-in behavior:
 - no duplicate entries (same source+title+details)
 - every new entry starts as `status: pending`
-- reminder when pending entries reach threshold (default: 5, configurable with `LEARNING_REVIEW_THRESHOLD`)
+- reminder when pending entries reach threshold (default: 5, configurable with `learningReviewThrasholder`)
 
 ## Promote a learning into a skill
 

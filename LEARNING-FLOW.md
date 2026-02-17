@@ -31,8 +31,8 @@ Only content in skill folders is treated as active skill guidance.
 - A reminder is shown when pending learnings reach the threshold.
 - Default threshold is `5`.
 - Override threshold if needed:
-  - macOS/Linux: `LEARNING_REVIEW_THRESHOLD=10 ./record-learning.sh generated "..." "..."`
-  - Windows (PowerShell): `$env:LEARNING_REVIEW_THRESHOLD=10; .\record-learning.ps1 generated "..." "..."`
+  - macOS/Linux: `learningReviewThrasholder=10 ./record-learning.sh generated "..." "..."`
+  - Windows (PowerShell): `$env:learningReviewThrasholder=10; .\record-learning.ps1 generated "..." "..."`
 
 ## Weekly workflow (15-20 minutes)
 

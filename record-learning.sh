@@ -11,7 +11,7 @@ TITLE="$2"
 DETAILS="$3"
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DATE_UTC="$(date -u +"%Y-%m-%d %H:%M:%S UTC")"
-REVIEW_THRESHOLD="${LEARNING_REVIEW_THRESHOLD:-5}"
+learningReviewThrasholder="${learningReviewThrasholder:-5}"
 
 case "$SOURCE" in
   manual)
@@ -56,9 +56,9 @@ PENDING_COUNT="$(
   ' "$REPO_DIR/learning/manual/entries.md" "$REPO_DIR/learning/generated/entries.md" 2>/dev/null || echo 0
 )"
 
-if [[ "$PENDING_COUNT" -ge "$REVIEW_THRESHOLD" ]]; then
+if [[ "$PENDING_COUNT" -ge "$learningReviewThrasholder" ]]; then
   echo
   echo "Reminder: you have $PENDING_COUNT pending learnings to review."
-  echo "Review target reached (threshold: $REVIEW_THRESHOLD)."
+  echo "Review target reached (threshold: $learningReviewThrasholder)."
   echo "Next step: approve/reject/promote pending entries."
 fi

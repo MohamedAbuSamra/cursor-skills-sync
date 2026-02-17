@@ -14,9 +14,9 @@ $ErrorActionPreference = "Stop"
 
 $RepoDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $DateUtc = (Get-Date).ToUniversalTime().ToString("yyyy-MM-dd HH:mm:ss 'UTC'")
-$ReviewThreshold = 5
-if ($env:LEARNING_REVIEW_THRESHOLD) {
-  $ReviewThreshold = [int]$env:LEARNING_REVIEW_THRESHOLD
+$learningReviewThrasholder = 5
+if ($env:learningReviewThrasholder) {
+  $learningReviewThrasholder = [int]$env:learningReviewThrasholder
 }
 
 switch ($Source) {
@@ -63,9 +63,9 @@ foreach ($Path in @($ManualPath, $GeneratedPath)) {
   }
 }
 
-if ($PendingCount -ge $ReviewThreshold) {
+if ($PendingCount -ge $learningReviewThrasholder) {
   Write-Host ""
   Write-Host "Reminder: you have $PendingCount pending learnings to review."
-  Write-Host "Review target reached (threshold: $ReviewThreshold)."
+  Write-Host "Review target reached (threshold: $learningReviewThrasholder)."
   Write-Host "Next step: approve/reject/promote pending entries."
 }

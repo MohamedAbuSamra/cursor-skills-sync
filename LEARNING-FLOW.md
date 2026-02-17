@@ -58,6 +58,12 @@ During review, update each pending entry to one of:
 - `rejected` -> wrong or not useful; add reason in details
 - `promoted` -> already moved into `skills/*`
 
+### Command helpers
+
+- Dashboard: `./scripts/learning-dashboard.sh 10`
+- Review: `./scripts/review-learning.sh generated <fingerprint> approved "reason"`
+- Promote: `./scripts/promote-learning.sh generated <fingerprint> my-skill-slug "description" skills`
+
 ## Rules for clean learning history
 
 - Do not mix sources in one entry.

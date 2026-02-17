@@ -78,6 +78,34 @@ What you get:
 - `post-commit`: reminds you to push after `SKILL.md` changes
 - GitHub Action (`skills-guard`): validates skills on push/PR
 
+## Learning review + promotion commands
+
+Text UI (dashboard):
+
+```bash
+./scripts/learning-dashboard.sh 10
+```
+
+Review a learning:
+
+```bash
+./scripts/review-learning.sh generated <fingerprint> approved "validated in 3 tasks"
+```
+
+Promote approved learning into a real skill:
+
+```bash
+./scripts/promote-learning.sh generated <fingerprint> my-skill-slug "Short skill description" skills
+```
+
+PowerShell equivalents:
+
+```powershell
+.\scripts\learning-dashboard.ps1 -Limit 10
+.\scripts\review-learning.ps1 -Source generated -Fingerprint <fingerprint> -Status approved -Reason "validated in 3 tasks"
+.\scripts\promote-learning.ps1 -Source generated -Fingerprint <fingerprint> -Slug my-skill-slug -Description "Short skill description" -Target skills
+```
+
 ## Learning flow (manual vs generated)
 
 Track daily improvements without mixing the source:

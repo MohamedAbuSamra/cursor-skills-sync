@@ -55,8 +55,3 @@ git commit -m "chore: sync local skills"
 git push
 ```
 
-## Security notes
-
-- Keep this repo private if possible.
-- Never commit tokens, API keys, `.env` files, or private credentials.
-- If any token was shared in chat, revoke and regenerate it.

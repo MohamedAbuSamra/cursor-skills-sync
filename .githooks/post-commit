@@ -3,7 +3,7 @@ set -euo pipefail
 
 changedFiles="$(git diff-tree --no-commit-id --name-only -r HEAD)"
 
-if printf "%s\n" "$changedFiles" | rg "SKILL\.md$" >/dev/null; then
+if printf "%s\n" "$changedFiles" | grep -E "SKILL\.md$" >/dev/null; then
   echo
   echo "Skill files changed in this commit."
   echo "Push now to share on all machines: git push"

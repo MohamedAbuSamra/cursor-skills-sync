@@ -10,6 +10,16 @@ Sync your Cursor/Codex skills across machines with GitHub.
 - `learning/manual/` -> manually captured learnings
 - `learning/generated/` -> AI-generated learnings
 
+## Important difference: learning vs skills
+
+- `learning/*` is a draft log (notes and experiments). It does not directly change assistant behavior.
+- `skills/*` is active guidance (`SKILL.md`) used by the assistant.
+- Use this flow: capture idea in `learning/*` -> validate in real work -> promote to `skills/*`.
+
+Quick rule:
+- If the idea is new/unproven, store it in `learning/*`.
+- If the idea is stable/reusable, convert it into a skill.
+
 ## Restore on another machine
 
 ### macOS / Linux
@@ -74,4 +84,11 @@ chmod +x ./record-learning.sh
 ```
 
 See `LEARNING-FLOW.md` for the full daily/weekly process.
+
+## Promote a learning into a skill
+
+1. Pick a validated entry from `learning/manual/entries.md` or `learning/generated/entries.md`.
+2. Create/update a folder under `cursor/skills/` or `cursor/skills-cursor/`.
+3. Add or update `SKILL.md` with clear instructions and examples.
+4. Commit and push.
 

@@ -23,6 +23,16 @@ Only content in skill folders is treated as active skill guidance.
    - Manual: `./record-learning.sh manual "short title" "what worked"`
    - Generated: `./record-learning.sh generated "short title" "ai-suggested pattern"`
 2. Commit/push when ready.
+3. Duplicate protection is automatic (same source+title+details is skipped).
+4. Every new entry is created with `status: pending`.
+
+## Reminder system
+
+- A reminder is shown when pending learnings reach the threshold.
+- Default threshold is `5`.
+- Override threshold if needed:
+  - macOS/Linux: `LEARNING_REVIEW_THRESHOLD=10 ./record-learning.sh generated "..." "..."`
+  - Windows (PowerShell): `$env:LEARNING_REVIEW_THRESHOLD=10; .\record-learning.ps1 generated "..." "..."`
 
 ## Weekly workflow (15-20 minutes)
 
@@ -39,6 +49,14 @@ Only content in skill folders is treated as active skill guidance.
 - Clear enough to write as instructions, not just an idea
 - No conflicts with existing skills
 - Includes at least one concrete example
+
+## Review decisions
+
+During review, update each pending entry to one of:
+
+- `approved` -> valid idea, keep for later promotion
+- `rejected` -> wrong or not useful; add reason in details
+- `promoted` -> already moved into `skills/*`
 
 ## Rules for clean learning history
 

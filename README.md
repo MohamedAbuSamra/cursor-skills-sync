@@ -85,6 +85,11 @@ chmod +x ./record-learning.sh
 
 See `LEARNING-FLOW.md` for the full daily/weekly process.
 
+Built-in behavior:
+- no duplicate entries (same source+title+details)
+- every new entry starts as `status: pending`
+- reminder when pending entries reach threshold (default: 5, configurable with `LEARNING_REVIEW_THRESHOLD`)
+
 ## Promote a learning into a skill
 
 1. Pick a validated entry from `learning/manual/entries.md` or `learning/generated/entries.md`.

@@ -10,5 +10,5 @@ venv/
 # Local / tooling
 .playwright-mcp/
 
-# Optional: uncomment to keep action logs out of repo
-# learning/action-logs.jsonl
+# Local data (dashboard writes here)
+learning/action-logs.jsonl

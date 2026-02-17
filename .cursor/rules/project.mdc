@@ -1,0 +1,29 @@
+---
+description: Cursor Skills Sync – this repo is the source of truth for Cursor/Codex skills and learning flow.
+globs: 
+alwaysApply: true
+---
+
+# Cursor Skills Sync – project context
+
+This folder is the **cursor-skills-sync** repo. Use it when working on skills, learning flow, or the dashboard.
+
+## Layout
+- **cursor/skills/** – Cursor custom skills (SKILL.md per skill)
+- **cursor/skills-cursor/** – Cursor helper skills
+- **codex/skills/** – Codex skills
+- **learning/manual/**, **learning/generated/** – learning entries (draft); promote to skills when validated
+- **ui/** – learning dashboard (single HTML, run via `./scripts/run-learning-ui.sh 8765`)
+
+## Sync
+- **to-local**: `./sync.sh to-local` – copy repo skills into `~/.cursor/skills` and `~/.codex/skills` (use after clone or pull)
+- **to-repo**: `./sync.sh to-repo` – copy local skills back into this repo (then commit and push)
+
+## Commands (from repo root)
+- Run dashboard: `./scripts/run-learning-ui.sh 8765` then open http://127.0.0.1:8765
+- Record learning: `./record-learning.sh manual "title" "details"` or `generated`
+- Review/promote: use the web UI or `./scripts/review-learning.sh` / `./scripts/promote-learning.sh`
+
+## Conventions
+- Skills live in folders with a single `SKILL.md`. Validate with `./scripts/validateSkills.sh`.
+- Learning entries use fingerprint (sha256 of source|title|details). Status: pending → approved/rejected → promoted.

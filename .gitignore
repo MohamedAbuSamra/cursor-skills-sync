@@ -1,0 +1,14 @@
+# OS
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Local / tooling
+.playwright-mcp/
+
+# Optional: uncomment to keep action logs out of repo
+# learning/action-logs.jsonl

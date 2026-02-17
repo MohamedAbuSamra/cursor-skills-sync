@@ -61,6 +61,7 @@ During review, update each pending entry to one of:
 ### Command helpers
 
 - Dashboard: `./scripts/learning-dashboard.sh 10`
+- Web UI: `./scripts/run-learning-ui.sh 8765` then open `http://127.0.0.1:8765`
 - Review: `./scripts/review-learning.sh generated <fingerprint> approved "reason"`
 - Promote: `./scripts/promote-learning.sh generated <fingerprint> my-skill-slug "description" skills`
 

@@ -86,6 +86,14 @@ Text UI (dashboard):
 ./scripts/learning-dashboard.sh 10
 ```
 
+Local web UI:
+
+```bash
+./scripts/run-learning-ui.sh 8765
+```
+
+Then open `http://127.0.0.1:8765`.
+
 Review a learning:
 
 ```bash
@@ -102,6 +110,7 @@ PowerShell equivalents:
 
 ```powershell
 .\scripts\learning-dashboard.ps1 -Limit 10
+.\scripts\run-learning-ui.ps1 -Port 8765
 .\scripts\review-learning.ps1 -Source generated -Fingerprint <fingerprint> -Status approved -Reason "validated in 3 tasks"
 .\scripts\promote-learning.ps1 -Source generated -Fingerprint <fingerprint> -Slug my-skill-slug -Description "Short skill description" -Target skills
 ```

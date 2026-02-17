@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Skills Sync Board</title>
+    <style>
+      /* Single palette: green accent, works in any context */
+      :root {
+        --bg: #e8eaed;
+        --panel: #ffffff;
+        --panel-alt: #f1f3f4;
+        --border: #dadce0;
+        --text: #202124;
+        --muted: #5f6368;
+        --accent: #1a7f37;
+        --accent-bg: #e6f4ea;
+        --ok: #137333;
+        --danger: #c5221f;
+        --shadow: 0 1px 3px rgba(60, 64, 67, 0.12);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        color: var(--text);
+        background: var(--bg);
+        font-size: 15px;
+        line-height: 1.6;
+      }
+      .app {
+        display: grid;
+        grid-template-columns: 300px minmax(0, 1fr);
+        height: 100vh;
+        overflow: hidden;
+      }
+      .sidebar {
+        background: var(--panel);
+        border-right: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        flex-shrink: 0;
+      }
+      .sidebar h1 {
+        margin: 0;
+        padding: 24px 20px;
+        border-bottom: 1px solid var(--border);
+        font-size: 15px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .navItem {
+        display: block;
+        margin: 6px 12px;
+        padding: 14px 16px;
+        border-radius: 12px;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.4;
+        text-decoration: none;
+      }
+      .navItem:hover { color: var(--text); background: var(--panel-alt); }
+      .navItem.active { background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+      .navGroup { padding: 16px 0; border-bottom: 1px solid var(--border); }
+      .main {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 0;
+        overflow: hidden;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        background: var(--panel);
+      }
+      .header input, .header select {
+        border: 1px solid var(--border);
+        background: var(--panel-alt);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 15px;
+        line-height: 1.4;
+      }
+      .header .search { flex: 1; min-width: 200px; }
+      .content {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        padding: 24px;
+      }
+      .page { display: none; }
+      .page.active { display: block; }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(100px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px 20px;
+        box-shadow: var(--shadow);
+      }
+      .card .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+      .card .v { margin-top: 6px; font-size: 26px; font-weight: 700; line-height: 1.2; }
+      .queue { display: grid; gap: 20px; }
+      .entry {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        box-shadow: var(--shadow);
+        padding: 20px 24px;
+      }
+      .entryTop {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .pill {
+        display: inline-block;
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .pill.draft { background: #fef7e0; color: #b06000; }
+      .pill.approved { background: #e6f4ea; color: var(--ok); }
+      .pill.declined { background: #fce8e6; color: var(--danger); }
+      .pill.skill { background: var(--accent-bg); color: var(--accent); }
+      .entry h3 { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; }
+      .meta {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .meta + .meta { margin-top: 4px; }
+      .actions { margin-top: 20px; }
+      .stageRow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .stageLabel { font-size: 13px; font-weight: 500; color: var(--muted); margin-right: 6px; }
+      .stageGroup {
+        display: inline-flex;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+        background: var(--panel-alt);
+      }
+      .stageBtn {
+        padding: 10px 18px;
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        border-right: 1px solid var(--border);
+      }
+      .stageBtn:last-child { border-right: 0; }
+      .stageBtn:hover { background: var(--panel); color: var(--text); }
+      .stageBtn.active { background: var(--accent); color: white; }
+      .stageBtn.active.approved { background: var(--ok); }
+      .stageBtn.active.declined { background: var(--danger); }
+      .stageBtn.active.draft { background: #b06000; }
+      .reasonRow { margin-bottom: 14px; }
+      .reasonRow textarea {
+        width: 100%;
+        border: 1px solid var(--border);
+        background: var(--panel-alt);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-size: 14px;
+        line-height: 1.5;
+        min-height: 48px;
+        resize: vertical;
+        box-sizing: border-box;
+      }
+      .actionButtons { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+      .actionButtons button {
+        cursor: pointer;
+        border: 0;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-size: 14px;
+      }
+      .actionButtons button.secondary {
+        background: var(--panel-alt);
+        border: 1px solid var(--border);
+        color: var(--text);
+      }
+      .promotePanel {
+        margin-top: 20px;
+        padding: 20px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: var(--panel-alt);
+        display: none;
+        gap: 14px;
+      }
+      .promotePanel.open { display: block; }
+      .promotePanel h4 { margin: 0 0 12px; font-size: 14px; color: var(--muted); font-weight: 600; }
+      .promotePanel .promoteFields {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: 1fr 1fr auto;
+        align-items: end;
+      }
+      .promotePanel .field { display: flex; flex-direction: column; gap: 4px; }
+      .promotePanel .field label { font-size: 12px; font-weight: 500; color: var(--muted); }
+      .promotePanel input, .promotePanel select {
+        border: 1px solid var(--border);
+        background: var(--panel);
+        color: var(--text);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-size: 14px;
+      }
+      .promotePanel button.createSkill {
+        padding: 12px 20px;
+        border: 0;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .skillReader {
+        min-width: 0;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .skillReaderHeader {
+        padding: 18px 24px;
+        border-bottom: 2px solid var(--border);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        line-height: 1.5;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+      .skillReaderHeader .skillReaderLabel { margin-right: 8px; }
+      .skillReaderHeader .path { color: var(--text); text-transform: none; letter-spacing: 0; font-weight: 600; word-break: break-all; }
+      .skillReaderBody {
+        margin: 0;
+        padding: 28px 32px 32px;
+        max-height: 72vh;
+        overflow: auto;
+        overflow-x: hidden;
+        background: var(--panel);
+        color: var(--text);
+        font-size: 15px;
+        line-height: 1.75;
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: break-word;
+        min-width: 0;
+        max-width: 100%;
+      }
+      .skillPageSub { display: none; min-height: 60vh; }
+      .skillPageSub.active { display: flex; flex-direction: column; }
+      .skillExplorer {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px 24px;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+      }
+      .skillExplorerSearch { margin-bottom: 16px; }
+      .skillExplorerSearch input {
+        width: 100%;
+        max-width: 420px;
+        border: 1px solid var(--border);
+        background: var(--panel-alt);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 12px 16px;
+        font-size: 15px;
+        line-height: 1.4;
+        box-sizing: border-box;
+      }
+      .skillExplorerList {
+        overflow: auto;
+        display: grid;
+        gap: 12px;
+        flex: 1;
+        min-height: 0;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      .skillExplorerItem {
+        border: 1px solid var(--border);
+        background: var(--panel-alt);
+        border-radius: 12px;
+        padding: 14px 16px;
+        cursor: pointer;
+      }
+      .skillExplorerItem:hover { border-color: var(--accent); background: var(--accent-bg); }
+      .skillExplorerItem .name { font-size: 14px; font-weight: 600; line-height: 1.4; }
+      .skillExplorerItem .desc { margin-top: 6px; font-size: 13px; color: var(--muted); line-height: 1.5; }
+      .skillExplorerItem .src { margin-top: 8px; font-size: 12px; color: var(--muted); text-transform: uppercase; }
+      .skillReadBar {
+        display: flex;
+        align-items: center;
+        gap: 0;
+        margin-bottom: 24px;
+        padding: 16px 20px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow);
+      }
+      .skillReadBar .backBtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--panel-alt);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+      .skillReadBar .backBtn:hover { border-color: var(--accent); background: var(--accent-bg); color: var(--accent); }
+      .logsList { display: grid; gap: 14px; }
+      .logItem {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--panel);
+        padding: 16px 20px;
+      }
+      .logTop { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; line-height: 1.5; }
+      .logMeta { color: var(--muted); font-size: 13px; margin-top: 8px; line-height: 1.5; }
+      .message { margin-top: 20px; font-size: 14px; color: var(--accent); line-height: 1.5; }
+      @media (max-width: 900px) {
+        .app { grid-template-columns: 1fr; }
+        .sidebar { border-right: 0; border-bottom: 1px solid var(--border); }
+        .stats { grid-template-columns: repeat(2, minmax(100px, 1fr)); }
+        .promotePanel .promoteFields { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <h1>Skills Sync Pro</h1>
+        <div class="navGroup">
+          <a class="navItem active" id="nav-review" href="#">Review Queue</a>
+          <a class="navItem" id="nav-logs" href="#">Action Logs</a>
+          <a class="navItem" id="nav-skill" href="#">Skill Reader</a>
+        </div>
+      </aside>
+      <section class="main">
+        <div class="header" id="reviewControls">
+          <input class="search" id="search" placeholder="Search title/details/reason" />
+          <select id="sourceFilter">
+            <option value="all">All Sources</option>
+            <option value="manual">Manual</option>
+            <option value="generated">Generated</option>
+          </select>
+          <select id="stageFilter">
+            <option value="all">All Stages</option>
+            <option value="draft">Draft</option>
+            <option value="approved">Approved</option>
+            <option value="declined">Declined</option>
+            <option value="skill">Promoted Skill</option>
+          </select>
+          <button type="button" id="refreshBtn">Refresh</button>
+        </div>
+        <div class="content">
+          <div class="page active" id="page-review">
+            <div class="stats" id="stats"></div>
+            <div class="queue" id="queue"></div>
+          </div>
+          <div class="page" id="page-logs">
+            <div class="logsList" id="logsList"></div>
+          </div>
+          <div class="page" id="page-skill">
+            <div class="skillPageSub active" id="skillPageExplore">
+              <div class="skillExplorer">
+                <div class="skillExplorerSearch">
+                  <input id="skillExplorerSearch" placeholder="Search skills..." />
+                </div>
+                <div class="skillExplorerList" id="skillExplorerList"></div>
+              </div>
+            </div>
+            <div class="skillPageSub" id="skillPageRead">
+              <div class="skillReadBar">
+                <button type="button" class="backBtn">← Back to skills list</button>
+              </div>
+              <div class="skillReader">
+                <div class="skillReaderHeader"><span class="skillReaderLabel">Skill file</span> <span class="path" id="skillReaderHeader"></span></div>
+                <pre class="skillReaderBody" id="skillReaderBody"></pre>
+              </div>
+            </div>
+          </div>
+          <div class="message" id="message"></div>
+        </div>
+      </section>
+    </div>
+    <script>
+(function() {
+  var state = { allEntries: [], visibleEntries: [], allSkills: [], allLogs: [], activePage: "review" };
+  function escapeHtml(v) {
+    return String(v || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+  }
+  function toStage(s) {
+    s = (s || "").trim();
+    if (s === "pending") return "draft";
+    if (s === "rejected") return "declined";
+    if (s === "promoted") return "skill";
+    return s || "draft";
+  }
+  function toStatus(s) {
+    if (s === "draft") return "pending";
+    if (s === "declined") return "rejected";
+    if (s === "skill") return "promoted";
+    return "approved";
+  }
+  function setMessage(t) {
+    var el = document.getElementById("message");
+    if (el) el.textContent = t || "";
+  }
+  function showPage(pageId) {
+    state.activePage = pageId;
+    document.getElementById("page-review").classList.toggle("active", pageId === "review");
+    document.getElementById("page-logs").classList.toggle("active", pageId === "logs");
+    document.getElementById("page-skill").classList.toggle("active", pageId === "skill");
+    document.getElementById("nav-review").classList.toggle("active", pageId === "review");
+    document.getElementById("nav-logs").classList.toggle("active", pageId === "logs");
+    document.getElementById("nav-skill").classList.toggle("active", pageId === "skill");
+    document.getElementById("reviewControls").style.display = pageId === "review" ? "flex" : "none";
+    if (pageId === "skill") {
+      renderSkillsExplorer();
+      showSkillSubView("explore");
+    }
+  }
+  function showSkillSubView(subId) {
+    var explore = document.getElementById("skillPageExplore");
+    var read = document.getElementById("skillPageRead");
+    if (!explore || !read) return;
+    var isExplore = subId === "explore";
+    explore.classList.toggle("active", isExplore);
+    read.classList.toggle("active", !isExplore);
+  }
+  function renderStats(counts) {
+    var cards = [["draft", counts.pending || 0], ["approved", counts.approved || 0], ["declined", counts.rejected || 0], ["promoted", counts.promoted || 0]];
+    var el = document.getElementById("stats");
+    if (!el) return;
+    el.innerHTML = cards.map(function(c) { return "<div class=\"card\"><div class=\"k\">" + c[0] + "</div><div class=\"v\">" + c[1] + "</div></div>"; }).join("");
+  }
+  function filteredEntries() {
+    var sourceValue = document.getElementById("sourceFilter").value;
+    var stageValue = document.getElementById("stageFilter").value;
+    var searchValue = document.getElementById("search").value.trim().toLowerCase();
+    return state.allEntries.filter(function(item) {
+      var stage = toStage(item.status);
+      if (sourceValue !== "all" && item.source !== sourceValue) return false;
+      if (stageValue !== "all" && stage !== stageValue) return false;
+      if (!searchValue) return true;
+      var hay = (item.title || "") + " " + (item.details || "") + " " + (item.reviewNote || "");
+      return hay.toLowerCase().includes(searchValue);
+    });
+  }
+  function slugify(text) {
+    return (text || "").trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
+  }
+  function togglePromote(index) {
+    var panel = document.getElementById("promote-" + index);
+    if (panel) panel.classList.toggle("open");
+  }
+  function renderQueue() {
+    state.visibleEntries = filteredEntries();
+    var queue = document.getElementById("queue");
+    if (!queue) return;
+    if (!state.visibleEntries.length) {
+      queue.innerHTML = "<div class='card'>No matching entries.</div>";
+      return;
+    }
+    queue.innerHTML = state.visibleEntries.map(function(item, index) {
+      var stage = toStage(item.status);
+      var slugHint = slugify(item.title) || "skill-slug";
+      var descHint = (item.details || "").trim().split(/\n/)[0].slice(0, 120) || "Short description";
+      return "<article class=\"entry\">" +
+        "<div class=\"entryTop\"><h3>" + escapeHtml(item.title) + "</h3><span class=\"pill " + stage + "\">" + escapeHtml(stage) + "</span></div>" +
+        "<div class=\"meta\">" + escapeHtml(item.details || "") + "</div>" +
+        "<div class=\"meta\">source: " + escapeHtml(item.source) + " | reason: " + escapeHtml(item.reviewNote || "-") + "</div>" +
+        "<div class=\"actions\">" +
+        "<input type=\"hidden\" id=\"stage-" + index + "\" value=\"" + escapeHtml(stage) + "\" />" +
+        "<div class=\"stageRow\">" +
+        "<span class=\"stageLabel\">Decision:</span>" +
+        "<div class=\"stageGroup\">" +
+        "<button type=\"button\" class=\"stageBtn approved" + (stage === "approved" ? " active" : "") + "\" data-stage-btn data-index=\"" + index + "\" data-stage=\"approved\">Approve</button>" +
+        "<button type=\"button\" class=\"stageBtn declined" + (stage === "declined" ? " active" : "") + "\" data-stage-btn data-index=\"" + index + "\" data-stage=\"declined\">Decline</button>" +
+        "<button type=\"button\" class=\"stageBtn draft" + (stage === "draft" ? " active" : "") + "\" data-stage-btn data-index=\"" + index + "\" data-stage=\"draft\">Draft</button>" +
+        "</div></div>" +
+        "<div class=\"reasonRow\"><textarea id=\"reason-" + index + "\" placeholder=\"Reason (required if you decline)\">" + escapeHtml(item.reviewNote || "") + "</textarea></div>" +
+        "<div class=\"actionButtons\">" +
+        "<button type=\"button\" data-review-save data-index=\"" + index + "\">Save decision</button>" +
+        "<button type=\"button\" class=\"secondary\" data-promote-toggle data-index=\"" + index + "\">Promote to skill</button>" +
+        "</div></div>" +
+        "<div class=\"promotePanel\" id=\"promote-" + index + "\">" +
+        "<h4>Create skill from this learning</h4>" +
+        "<div class=\"promoteFields\">" +
+        "<div class=\"field\"><label>Skill slug</label><input id=\"slug-" + index + "\" placeholder=\"e.g. my-skill-name\" value=\"" + escapeHtml(slugHint) + "\" /></div>" +
+        "<div class=\"field\"><label>Description</label><input id=\"desc-" + index + "\" placeholder=\"One line description\" value=\"" + escapeHtml(descHint) + "\" /></div>" +
+        "<div class=\"field\"><label>Folder</label><select id=\"target-" + index + "\"><option value=\"skills\">skills</option><option value=\"skills-cursor\">skills-cursor</option></select></div>" +
+        "<button type=\"button\" class=\"createSkill\" data-promote-submit data-index=\"" + index + "\">Create skill</button>" +
+        "</div></div></article>";
+    }).join("");
+  }
+  function renderSkillsExplorer() {
+    var searchEl = document.getElementById("skillExplorerSearch");
+    var listEl = document.getElementById("skillExplorerList");
+    if (!searchEl || !listEl) return;
+    var query = (searchEl.value || "").trim().toLowerCase();
+    var items = state.allSkills.filter(function(item) {
+      if (!query) return true;
+      return (item.name + " " + item.description + " " + item.source).toLowerCase().includes(query);
+    });
+    if (!items.length) {
+      listEl.innerHTML = "<div class='muted'>No skills found.</div>";
+      return;
+    }
+    listEl.innerHTML = items.map(function(item) {
+      return "<div class=\"skillExplorerItem\" data-skill-path=\"" + escapeHtml(item.path) + "\">" +
+        "<div class=\"name\">" + escapeHtml(item.name) + "</div>" +
+        "<div class=\"desc\">" + escapeHtml(item.description) + "</div>" +
+        "<div class=\"src\">" + escapeHtml(item.source) + "</div></div>";
+    }).join("");
+  }
+  function renderLogs() {
+    var el = document.getElementById("logsList");
+    if (!el) return;
+    if (!state.allLogs.length) {
+      el.innerHTML = "<div class='card'>No logs yet.</div>";
+      return;
+    }
+    el.innerHTML = state.allLogs.map(function(logItem) {
+      return "<div class=\"logItem\">" +
+        "<div class=\"logTop\"><strong>" + escapeHtml(logItem.type || "event") + "</strong><span class=\"muted\">" + escapeHtml(logItem.timestamp || "") + "</span></div>" +
+        "<div class=\"logMeta\">title: " + escapeHtml(logItem.title || "-") + "</div>" +
+        "<div class=\"logMeta\">source: " + escapeHtml(logItem.source || "-") + " | status: " + escapeHtml(logItem.status || "-") + "</div>" +
+        "<div class=\"logMeta\">reason: " + escapeHtml(logItem.reason || "-") + "</div>" +
+        "<div class=\"logMeta\">skillPath: " + escapeHtml(logItem.skillPath || "-") + "</div></div>";
+    }).join("");
+  }
+  function saveReview(index) {
+    var item = state.visibleEntries[index];
+    if (!item) return Promise.resolve();
+    var stageValue = document.getElementById("stage-" + index).value;
+    var reasonValue = document.getElementById("reason-" + index).value.trim();
+    if (stageValue === "declined" && !reasonValue) {
+      setMessage("Decline requires a reason.");
+      return Promise.resolve();
+    }
+    return fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ source: item.source, fingerprint: item.fingerprint, status: toStatus(stageValue), reason: reasonValue }) })
+      .then(function(r) { return r.json(); })
+      .then(function(payload) {
+        if (!payload.ok) { setMessage("Error: " + (payload.error || "review failed")); return; }
+        return fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "review", title: item.title || "", source: item.source, status: toStatus(stageValue), reason: reasonValue }) });
+      })
+      .then(function() { setMessage("Review saved."); loadData(); });
+  }
+  function promote(index) {
+    var item = state.visibleEntries[index];
+    if (!item) return Promise.resolve();
+    var slugValue = (document.getElementById("slug-" + index).value || "").trim();
+    var descValue = (document.getElementById("desc-" + index).value || "").trim();
+    var targetValue = document.getElementById("target-" + index).value || "skills";
+    if (!slugValue || !descValue) {
+      setMessage("Provide slug and description before promotion.");
+      return Promise.resolve();
+    }
+    return fetch("/api/promote", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ source: item.source, fingerprint: item.fingerprint, slug: slugValue, description: descValue, target: targetValue }) })
+      .then(function(r) { return r.json(); })
+      .then(function(payload) {
+        if (!payload.ok) { setMessage("Error: " + (payload.error || "promote failed")); return; }
+        return fetch("/api/log", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "promote", title: item.title || "", source: item.source, status: "promoted", reason: descValue, skillPath: targetValue + "/" + slugValue + "/SKILL.md" }) });
+      })
+      .then(function() { setMessage("Learning promoted to skill."); loadData(); });
+  }
+  function openSkill(skillPath) {
+    return fetch("/api/skill?path=" + encodeURIComponent(skillPath))
+      .then(function(r) { return r.json(); })
+      .then(function(payload) {
+        if (!payload.ok) { setMessage("Error: " + (payload.error || "skill load failed")); return; }
+        var h = document.getElementById("skillReaderHeader");
+        var b = document.getElementById("skillReaderBody");
+        if (h) h.textContent = payload.data.path || "";
+        if (b) b.textContent = payload.data.content;
+        showPage("skill");
+        showSkillSubView("read");
+      });
+  }
+  function loadData() {
+    setMessage("");
+    Promise.all([
+      fetch("/api/dashboard?limit=800").then(function(r) { return r.json(); }),
+      fetch("/api/skills").then(function(r) { return r.json(); }),
+      fetch("/api/logs?limit=200").then(function(r) { return r.json(); })
+    ]).then(function(results) {
+      var dashboardPayload = results[0];
+      var skillsPayload = results[1];
+      var logsPayload = results[2];
+      if (!dashboardPayload.ok) {
+        setMessage("Error: " + (dashboardPayload.error || "dashboard failed"));
+        return;
+      }
+      state.allEntries = dashboardPayload.data.all || [];
+      renderStats(dashboardPayload.data.counts || {});
+      renderQueue();
+      if (skillsPayload.ok) {
+        state.allSkills = skillsPayload.data.items || [];
+        renderSkillsExplorer();
+      }
+      if (logsPayload.ok) {
+        state.allLogs = logsPayload.data || [];
+        renderLogs();
+      }
+    });
+  }
+  document.getElementById("nav-review").addEventListener("click", function(e) { e.preventDefault(); showPage("review"); });
+  document.getElementById("nav-logs").addEventListener("click", function(e) { e.preventDefault(); showPage("logs"); });
+  document.getElementById("nav-skill").addEventListener("click", function(e) { e.preventDefault(); showPage("skill"); });
+  document.querySelector(".backBtn").addEventListener("click", function() { showSkillSubView("explore"); });
+  document.getElementById("refreshBtn").addEventListener("click", loadData);
+  document.getElementById("search").addEventListener("input", renderQueue);
+  document.getElementById("sourceFilter").addEventListener("change", renderQueue);
+  document.getElementById("stageFilter").addEventListener("change", renderQueue);
+  document.getElementById("skillExplorerSearch").addEventListener("input", renderSkillsExplorer);
+  document.querySelector(".content").addEventListener("click", function(e) {
+    var stageBtn = e.target.closest("[data-stage-btn]");
+    if (stageBtn) {
+      var idx = stageBtn.getAttribute("data-index");
+      var stage = stageBtn.getAttribute("data-stage");
+      var hidden = document.getElementById("stage-" + idx);
+      if (hidden) hidden.value = stage;
+      var group = stageBtn.closest(".stageGroup");
+      if (group) { group.querySelectorAll(".stageBtn").forEach(function(b) { b.classList.remove("active"); }); stageBtn.classList.add("active"); }
+      return;
+    }
+    var saveBtn = e.target.closest("[data-review-save]");
+    if (saveBtn) { saveReview(Number(saveBtn.getAttribute("data-index"))); return; }
+    var toggleBtn = e.target.closest("[data-promote-toggle]");
+    if (toggleBtn) { togglePromote(Number(toggleBtn.getAttribute("data-index"))); return; }
+    var promoteBtn = e.target.closest("[data-promote-submit]");
+    if (promoteBtn) { promote(Number(promoteBtn.getAttribute("data-index"))); return; }
+  });
+  document.getElementById("skillExplorerList").addEventListener("click", function(e) {
+    var item = e.target.closest(".skillExplorerItem");
+    var path = item && item.getAttribute("data-skill-path");
+    if (path) { showPage("skill"); openSkill(path); }
+  });
+  showPage("review");
+  loadData();
+})();
+    </script>
+  </body>
+</html>

@@ -15,7 +15,8 @@ chmod +x \
   "$repoDir/scripts/validateSkills.sh" \
   "$repoDir/scripts/review-learning.sh" \
   "$repoDir/scripts/promote-learning.sh" \
-  "$repoDir/scripts/learning-dashboard.sh"
+  "$repoDir/scripts/learning-dashboard.sh" \
+  "$repoDir/scripts/run-learning-ui.sh"
 
 echo "Installed hooks into $hooksDest"
 echo "Active hooks: pre-commit, post-commit"

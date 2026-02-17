@@ -15,11 +15,8 @@ Sync your Cursor/Codex skills across machines with GitHub.
 ```bash
 git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
 cd cursor-skills-sync
-
-mkdir -p ~/.cursor/skills ~/.cursor/skills-cursor ~/.codex/skills
-rsync -a cursor/skills/ ~/.cursor/skills/
-rsync -a cursor/skills-cursor/ ~/.cursor/skills-cursor/
-rsync -a codex/skills/ ~/.codex/skills/
+chmod +x ./sync.sh
+./sync.sh to-local
 ```
 
 Then restart Cursor.
@@ -29,14 +26,7 @@ Then restart Cursor.
 ```powershell
 git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
 cd cursor-skills-sync
-
-New-Item -ItemType Directory -Force "$HOME\.cursor\skills" | Out-Null
-New-Item -ItemType Directory -Force "$HOME\.cursor\skills-cursor" | Out-Null
-New-Item -ItemType Directory -Force "$HOME\.codex\skills" | Out-Null
-
-Copy-Item -Path ".\cursor\skills\*" -Destination "$HOME\.cursor\skills" -Recurse -Force
-Copy-Item -Path ".\cursor\skills-cursor\*" -Destination "$HOME\.cursor\skills-cursor" -Recurse -Force
-Copy-Item -Path ".\codex\skills\*" -Destination "$HOME\.codex\skills" -Recurse -Force
+.\sync.ps1 to-local
 ```
 
 Then restart Cursor.
@@ -46,10 +36,17 @@ Then restart Cursor.
 Run these from this repo folder:
 
 ```bash
-rsync -a ~/.cursor/skills/ cursor/skills/
-rsync -a ~/.cursor/skills-cursor/ cursor/skills-cursor/
-rsync -a ~/.codex/skills/ codex/skills/
+./sync.sh to-repo
 
+git add .
+git commit -m "chore: sync local skills"
+git push
+```
+
+For Windows:
+
+```powershell
+.\sync.ps1 to-repo
 git add .
 git commit -m "chore: sync local skills"
 git push

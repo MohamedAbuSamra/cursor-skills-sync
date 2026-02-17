@@ -7,6 +7,8 @@ Sync your Cursor/Codex skills across machines with GitHub.
 - `cursor/skills/` -> custom Cursor skills
 - `cursor/skills-cursor/` -> Cursor helper skills
 - `codex/skills/` -> Codex skills
+- `learning/manual/` -> manually captured learnings
+- `learning/generated/` -> AI-generated learnings
 
 ## Restore on another machine
 
@@ -51,4 +53,25 @@ git add .
 git commit -m "chore: sync local skills"
 git push
 ```
+
+## Learning flow (manual vs generated)
+
+Track daily improvements without mixing the source:
+
+### macOS / Linux
+
+```bash
+chmod +x ./record-learning.sh
+./record-learning.sh manual "title" "details from your own decision"
+./record-learning.sh generated "title" "details from AI suggestion"
+```
+
+### Windows (PowerShell)
+
+```powershell
+.\record-learning.ps1 manual "title" "details from your own decision"
+.\record-learning.ps1 generated "title" "details from AI suggestion"
+```
+
+See `LEARNING-FLOW.md` for the full daily/weekly process.
 

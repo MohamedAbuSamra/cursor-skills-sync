@@ -35,6 +35,25 @@ Then **restart Cursor**.
 - `learning/manual/` -> manually captured learnings
 - `learning/generated/` -> AI-generated learnings
 
+## How it works across projects
+
+- **Skills** are global. After `./setup.sh`, Cursor reads from `~/.cursor/skills` in **every project**. So the same skills apply whether you open this repo or another app.
+- **Learnings** live only in this repo (`learning/manual/entries.md` and `learning/generated/entries.md`). To add a learning when you're in a **different project**, run the script by path or use an alias:
+
+  ```bash
+  # From any folder (replace with your actual path):
+  ~/cursor-skills-sync/record-learning.sh generated "Title" "What you learned"
+  ```
+
+  Optional alias (add to `~/.zshrc` or `~/.bashrc`):
+
+  ```bash
+  alias log-learning='~/cursor-skills-sync/record-learning.sh'
+  # Then from any project: log-learning generated "Title" "Details"
+  ```
+
+  Then `git pull` / `git push` from the cursor-skills-sync repo to sync learnings across machines.
+
 ## Important difference: learning vs skills
 
 - `learning/*` is a draft log (notes and experiments). It does not directly change assistant behavior.

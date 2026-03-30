@@ -17,6 +17,7 @@ When writing or modifying code, always:
 4. **Maintain consistency** - Use consistent naming, structure, and organization
 5. **Handle errors properly** - Include appropriate error handling and validation
 6. **Write maintainable code** - Prioritize readability and maintainability
+7. **Modern delivery habits** - Small reviewable diffs, committed lockfiles where the stack uses them, structured logging for services, and accessibility considered by default for UI work (see **modern-development-practices** for cross-cutting norms)
 
 ## Before Writing Code
 
@@ -72,6 +73,7 @@ This skill works alongside your other skills. When writing code:
 - **Error scenarios** → Apply error handling and logging skill
 - **Security features** → Apply security best practices skill
 - **Performance issues** → Apply performance optimization skill
+- **Current engineering defaults** (AI-assisted workflow, observability, supply chain, API contracts) → Apply modern-development-practices skill
 
 ## Project-Specific Considerations
 

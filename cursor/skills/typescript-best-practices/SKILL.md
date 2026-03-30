@@ -119,6 +119,36 @@ function handleResult<T>(result: Result<T>) {
 }
 ```
 
+## `satisfies` and literal inference
+
+Use **`satisfies`** to check an object or array against a type while keeping inferred literal types where TypeScript allows:
+
+```typescript
+type HttpMethod = "GET" | "POST";
+interface Endpoint {
+  path: string;
+  method: HttpMethod;
+}
+
+// ✅ Good — keys and shapes checked; excess or wrong `method` is an error
+const api = {
+  listUsers: { path: "/users", method: "GET" },
+  createUser: { path: "/users", method: "POST" },
+} satisfies Record<string, Endpoint>;
+```
+
+Use **`as const`** on objects and arrays when you need readonly deeply-narrowed literals (often paired with `satisfies` on the outer value).
+
+**`const` type parameters** (TypeScript 5.0+): infer literals from arguments without forcing call-site `as const`:
+
+```typescript
+declare function ensureTuple<const T extends readonly unknown[]>(items: T): T;
+
+const t = ensureTuple(["a", "b"]); // readonly ["a", "b"], not string[]
+```
+
+Prefer these over `as any` or loose assertions when shaping config maps, route tables, and discriminated-union payloads.
+
 ## Utility Types
 
 ### Common Utility Types

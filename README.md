@@ -27,6 +27,35 @@ Then **restart your AI agents**.
 
 ---
 
+## Bootstrap any AI agent with one prompt
+
+Every AI agent (Claude, Cursor, Copilot, Codex) can be instantly loaded with your full skills and engineering standards by pasting a bootstrap prompt into the chat.
+
+**Prompts live in `prompts/`:**
+
+| File | Use when |
+|---|---|
+| [`prompts/universal.md`](prompts/universal.md) | Any agent — paste the prompt block inside it |
+| [`prompts/claude.md`](prompts/claude.md) | Claude.ai or a new Claude Code session |
+| [`prompts/cursor.md`](prompts/cursor.md) | Cursor AI chat (Cmd+L) |
+| [`prompts/codex.md`](prompts/codex.md) | Codex / OpenAI Assistants |
+| [`prompts/copilot.md`](prompts/copilot.md) | GitHub Copilot Chat in VS Code |
+
+**How to use:**
+
+1. Open the relevant prompt file
+2. Copy the text block between the triple-backtick fences
+3. Paste it as your first message in the AI agent chat
+4. The agent reads your skills, confirms what it loaded, and is ready to work
+
+Once pasted, the agent will:
+- Load `PROJECT-BOOTSTRAP.md`, `SKILL-AUDIT.md`, and the key baseline skills
+- Apply `clean-code-principles` and `product-software-thinking` by default
+- Know which conditional skills to apply (algorithms, DDD, UX, game design, etc.)
+- Know about the learning pipeline and suggest `record-learning.sh` when a pattern emerges
+
+> **Note:** For Claude Code CLI and Cursor, running `./sync.sh to-local` installs skills globally — you won't need the prompt every session. The prompts are most useful for web-based chats or fresh machines.
+
 ## What this repo contains
 
 - `skills/` -> cross-agent engineering skills used by all AI agents

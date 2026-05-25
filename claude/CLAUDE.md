@@ -68,12 +68,31 @@ Claude-specific skills: `~/ai-agent-skills-sync/claude/skills/`
 
 ## Grow-together learning contract
 
-When a reusable pattern emerges from our work together:
+When a reusable pattern emerges from our work together, always suggest capturing it — even from other repos and other chats.
 
-1. Suggest recording it: `~/ai-agent-skills-sync/record-learning.sh generated "title" "details and why it helped"`
-2. Suggest which existing skill it belongs in — prefer updating an existing skill over creating a new one
-3. Common promotion targets: `master-engineering-standards`, `clean-code-principles`, `product-software-thinking`, `testing-patterns`, `security-best-practices`, `typescript-best-practices`, `error-handling-logging`, `async-concurrency`
-4. The pipeline is: `pending → approved → promoted` — don't skip review
+### Adding to an existing skill
+When the pattern fits a skill that already exists:
+1. Suggest: `~/ai-agent-skills-sync/record-learning.sh generated "title" "details and why it helped"`
+2. Name the target skill: `master-engineering-standards`, `clean-code-principles`, `product-software-thinking`, `testing-patterns`, `security-best-practices`, `typescript-best-practices`, `error-handling-logging`, `async-concurrency`, `validation-input-sanitization`, `api-design-restful`, `dry-solid-principles`, `performance-optimization`
+3. Pipeline: `pending → approved → promote-learning-into-existing.sh`
+
+### Creating a new skill
+When the pattern is genuinely new — no existing skill covers it:
+1. Suggest: `~/ai-agent-skills-sync/record-learning.sh generated "title" "details and why it helped"`
+2. Propose a skill slug (kebab-case) and one-line description
+3. Pipeline: `pending → approved → promote-learning.sh` → new `skills/<slug>/SKILL.md`
+
+Or scaffold it directly if the pattern is already well understood:
+```bash
+~/ai-agent-skills-sync/scripts/new-skill.sh <slug> "Short description" "Optional: book or source"
+```
+
+### When to suggest a new skill vs updating existing
+- New domain not covered yet (e.g., `mobile-patterns`, `devops-practices`, `data-pipelines`) → new skill
+- Refinement of existing guidance → update existing skill
+- Cross-cutting pattern that strengthens multiple skills → `master-engineering-standards`
+
+After any session where a pattern emerged, always end with one of these suggestions. Don't skip it.
 
 ## Per-repo override
 

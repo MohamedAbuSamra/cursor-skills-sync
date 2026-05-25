@@ -1,6 +1,6 @@
 # ai-agent-skills-sync
 
-Sync your Cursor/Codex skills across machines with GitHub.
+Sync AI agent skills (Cursor, Claude Code, Codex, Copilot) across machines with GitHub.
 
 ## Quick setup (one command)
 
@@ -13,7 +13,7 @@ chmod +x ./setup.sh
 ./setup.sh
 ```
 
-Then **restart Cursor**. Skills from this repo are now active.
+Then **restart your AI agents** (Cursor, Claude Code, etc.). Skills from this repo are now active.
 
 **Windows (PowerShell)**
 
@@ -23,7 +23,7 @@ cd ai-agent-skills-sync
 .\setup.ps1
 ```
 
-Then **restart Cursor**.
+Then **restart your AI agents**.
 
 ---
 
@@ -105,7 +105,7 @@ See `SKILL-AUDIT.md` for the full classification.
 
 ## How it works across projects
 
-- **Skills** are global. After `./setup.sh`, Cursor reads from `~/.cursor/skills` in **every project**. So the same skills apply whether you open this repo or another app.
+- **Skills** are global. After `./setup.sh`, all configured agents (Cursor, Claude Code, Codex) read from their respective skill directories in **every project**. The same skills apply whether you open this repo or another app.
 - **Learnings** live only in this repo (`learning/manual/entries.md` and `learning/generated/entries.md`). To add a learning when you're in a **different project**, run the script by path or use an alias:
 
   ```bash
@@ -135,7 +135,7 @@ Quick rule:
 
 ## Restore on another machine
 
-Use the **Quick setup** above (`./setup.sh` or `.\setup.ps1`). Or manually: run `./sync.sh to-local` (or `.\sync.ps1 to-local`) from this repo, then restart Cursor.
+Use the **Quick setup** above (`./setup.sh` or `.\setup.ps1`). Or manually: run `./sync.sh to-local` (or `.\sync.ps1 to-local`) from this repo, then restart your AI agents.
 
 ## Update this repo after local changes
 

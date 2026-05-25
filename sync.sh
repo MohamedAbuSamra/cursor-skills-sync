@@ -47,7 +47,9 @@ case "$MODE" in
     ensure_local_structure
     rsync -a --delete "$SHARED_SKILLS_SRC" "$SHARED_SKILLS_DEST"
     rsync -a --delete "$CURSOR_SKILLS_CURSOR_SRC" "$CURSOR_SKILLS_CURSOR_DEST"
-    rsync -a --delete "$CODEX_SKILLS_SRC" "$CODEX_SKILLS_DEST"
+    # Codex gets shared skills + any codex-specific skills
+    rsync -a "$SHARED_SKILLS_SRC" "$CODEX_SKILLS_DEST"
+    rsync -a "$CODEX_SKILLS_SRC" "$CODEX_SKILLS_DEST"
     rsync -a --delete "$CLAUDE_SKILLS_SRC" "$CLAUDE_SKILLS_DEST"
     generate_claude_md "$CLAUDE_CLAUDE_MD_DEST"
     echo "Synced repo -> local skill directories."

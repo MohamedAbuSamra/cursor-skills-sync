@@ -39,12 +39,29 @@ Key references (in order):
 | `master-engineering-standards` | Always |
 | `always-apply-standards` | Always |
 | `modern-development-practices` | Always |
+| `clean-code-principles` | Always — naming, focused functions, error handling, no null returns |
+| `product-software-thinking` | Always — validate before building, user goals drive tech decisions |
 | `testing-patterns` | Writing or changing behavior |
 | `security-best-practices` | Auth, input, secrets |
 | `typescript-best-practices` | TypeScript files |
 | `async-concurrency` | async/await, promises, queues |
 | `error-handling-logging` | Error paths, structured logging |
 | `validation-input-sanitization` | User input, API boundaries |
+
+## Conditional skills (apply when domain matches)
+
+| Skill | Apply when |
+|---|---|
+| `algorithms-data-structures` | Complexity analysis, data structure choice, sorting, graphs, DP |
+| `api-design-restful` | HTTP API design, endpoints, status codes, versioning |
+| `database-data-modeling` | Schema design, migrations, ORM, indexes, N+1 queries |
+| `domain-driven-design` | Service boundaries, bounded contexts, domain modeling |
+| `dry-solid-principles` | Refactoring, duplication, design quality |
+| `game-design-principles` | Engagement loops, feedback systems, user motivation |
+| `javascript-patterns` | JavaScript files — closures, modules, functional patterns |
+| `performance-optimization` | Caching, lazy loading, query performance |
+| `software-patterns-architecture` | Architecture decisions, design patterns |
+| `ux-product-design` | UI/UX decisions, usability, design sprints |
 
 Full shared skill list: `~/ai-agent-skills-sync/skills/`
 Claude-specific skills: `~/ai-agent-skills-sync/claude/skills/`
@@ -55,7 +72,7 @@ When a reusable pattern emerges from our work together:
 
 1. Suggest recording it: `~/ai-agent-skills-sync/record-learning.sh generated "title" "details and why it helped"`
 2. Suggest which existing skill it belongs in — prefer updating an existing skill over creating a new one
-3. Common promotion targets: `master-engineering-standards`, `testing-patterns`, `security-best-practices`, `typescript-best-practices`, `error-handling-logging`, `async-concurrency`
+3. Common promotion targets: `master-engineering-standards`, `clean-code-principles`, `product-software-thinking`, `testing-patterns`, `security-best-practices`, `typescript-best-practices`, `error-handling-logging`, `async-concurrency`
 4. The pipeline is: `pending → approved → promoted` — don't skip review
 
 ## Per-repo override

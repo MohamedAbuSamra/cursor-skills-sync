@@ -2,6 +2,17 @@
 
 This repository should be worked on using the following baseline.
 
+## Always-apply standards
+
+**clean-code-principles** — names reveal intent, functions do one thing, no null returns,
+errors are first-class, comments explain WHY only, no commented-out code.
+
+**product-software-thinking** — validate before building, user goals drive technical decisions,
+ship the smallest useful thing, measure what matters.
+
+**master-engineering-standards** — root-cause fixes, small focused diffs, reuse before adding,
+secure defaults, validate inputs at system boundaries.
+
 ## Default behavior
 
 - Read the relevant code before editing.
@@ -9,12 +20,23 @@ This repository should be worked on using the following baseline.
 - Keep changes minimal and aligned with existing patterns.
 - Validate the changed path with tests, lint, typecheck, or direct runtime checks.
 - Call out risks, assumptions, and validation gaps clearly.
+- camelCase naming unless the repo already uses a different convention.
+- Explicit, maintainable code over clever shortcuts.
+- Secure defaults and clear error handling — never return null, never swallow errors.
 
-## Engineering preferences
+## Apply when the domain matches
 
-- Prefer camelCase naming unless the repository already uses a different convention.
-- Prefer explicit, maintainable code over clever shortcuts.
-- Prefer secure defaults and clear error handling.
+- `algorithms-data-structures`     → complexity, data structures, sorting, graphs, DP
+- `api-design-restful`             → HTTP API design, status codes, versioning
+- `async-concurrency`              → async/await, queues, race conditions
+- `database-data-modeling`         → schema, migrations, ORM, indexes
+- `domain-driven-design`           → bounded contexts, aggregates, domain events
+- `error-handling-logging`         → typed errors, structured logs, retry
+- `javascript-patterns`            → closures, modules, functional JS, immutability
+- `security-best-practices`        → auth, input, RBAC, secrets
+- `testing-patterns`               → unit/integration, F.I.R.S.T., AAA
+- `typescript-best-practices`      → strict mode, no any, generics
+- `ux-product-design`              → affordances, usability, design sprints
 
 ## Reusable lessons
 

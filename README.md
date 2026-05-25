@@ -13,7 +13,7 @@ chmod +x ./setup.sh
 ./setup.sh
 ```
 
-Then **restart your AI agents** (Cursor, Claude Code, etc.). Skills from this repo are now active.
+Then **restart your AI agents** (Cursor, Codex, Claude Code, etc.). Skills from this repo are now active.
 
 **Windows (PowerShell)**
 
@@ -23,7 +23,7 @@ cd ai-agent-skills-sync
 .\setup.ps1
 ```
 
-Then **restart your AI agents**.
+Then **restart your AI agents** (including Codex if you use it).
 
 ---
 
@@ -99,7 +99,8 @@ This creates:
 - `AGENTS.md`
 - `CLAUDE.md`
 
-That gives each target repo a local instruction surface for all AI agents.
+That gives each target repo a local instruction surface for all AI agents. For Codex specifically,
+`AGENTS.md` is the durable repo-local memory file that should be read before work starts.
 
 ## Skill layout
 
@@ -109,6 +110,10 @@ Skills are split by scope:
 - **`cursor/skills-cursor/`** — Cursor-specific workflow skills
 - **`claude/skills/`** — Claude Code-specific skills
 - **`codex/skills/`** — Codex/OpenAI skills
+
+Current Codex-specific skill:
+
+- `codex-collaboration-workflow` — inspect first, preserve user changes, communicate progress, validate changed paths
 
 Adding a new AI agent: create `<agent>/skills/`, wire it in `sync.sh`, `sync.ps1`, `validateSkills.sh`, and `learningUiServer.py`.
 

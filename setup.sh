@@ -25,7 +25,8 @@ echo "Verifying..."
 chmod +x ./verify.sh
 ./verify.sh
 echo ""
-echo "Done. Restart Cursor so it picks up the skills."
+echo "Done. Restart Cursor, Codex, and Claude Code so they pick up the synced skills."
+echo "Codex skills installed at: $HOME/.codex/skills"
 echo "Claude Code global rules installed at: $HOME/.claude/CLAUDE.md"
 echo "Optional: run ./scripts/run-learning-ui.sh 8765 and open http://127.0.0.1:8765 for the learning dashboard."
 echo "Optional: run ./scripts/install-repo-bootstrap.sh /path/to/another-repo to stamp local instruction files into a project."

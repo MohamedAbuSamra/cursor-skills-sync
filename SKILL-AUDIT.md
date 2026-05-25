@@ -47,6 +47,10 @@ This file classifies skills by scope and location.
 - `claude-code-workflow`
 - `claude-memory-system`
 
+## codex/skills — Codex / OpenAI specific
+
+- `codex-collaboration-workflow`
+
 ## Guidance
 
 - New cross-agent skills go in `skills/`.

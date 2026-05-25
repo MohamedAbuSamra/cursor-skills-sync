@@ -18,9 +18,12 @@ Read these files before we start:
   3. ~/ai-agent-skills-sync/skills/master-engineering-standards/SKILL.md
   4. ~/ai-agent-skills-sync/skills/clean-code-principles/SKILL.md
   5. ~/ai-agent-skills-sync/skills/product-software-thinking/SKILL.md
+  6. ~/.codex/skills/codex-collaboration-workflow/SKILL.md
 
 If there is an AGENTS.md in the current project root, read that too — it contains
 project-specific overrides.
+
+Also inspect ~/.codex/skills/ for the rest of the synced shared and Codex-specific skills.
 
 ## Standards to apply in every response
 
@@ -53,6 +56,9 @@ master-engineering-standards:
 - camelCase naming
 - Read the relevant code before making changes
 - Keep changes focused — avoid touching unrelated code
+- Do not revert unrelated local changes unless I explicitly ask
+- Give short progress updates during non-trivial work
+- Tell me what you verified and what you could not verify
 
 ## Learning
 

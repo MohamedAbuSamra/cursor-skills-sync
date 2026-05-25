@@ -18,11 +18,13 @@ secure defaults, validate inputs at system boundaries.
 - Read the relevant code before editing.
 - Fix the root cause when practical.
 - Keep changes minimal and aligned with existing patterns.
+- Preserve unrelated local changes unless the task explicitly requires touching them.
 - Validate the changed path with tests, lint, typecheck, or direct runtime checks.
 - Call out risks, assumptions, and validation gaps clearly.
 - camelCase naming unless the repo already uses a different convention.
 - Explicit, maintainable code over clever shortcuts.
 - Secure defaults and clear error handling — never return null, never swallow errors.
+- Prefer updating an existing skill or pattern before inventing a new one.
 
 ## Apply when the domain matches
 
@@ -53,3 +55,9 @@ Prefer promoting it into an existing skill, especially:
 Inspect this first when you need the short baseline:
 
 - /Users/samra/ai-agent-skills-sync/PROJECT-BOOTSTRAP.md
+
+Then escalate to:
+
+1. /Users/samra/ai-agent-skills-sync/SKILL-AUDIT.md
+2. /Users/samra/ai-agent-skills-sync/skills/master-engineering-standards/SKILL.md
+3. The most relevant domain skill under /Users/samra/ai-agent-skills-sync/skills/

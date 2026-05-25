@@ -9,6 +9,7 @@ venv/
 
 # Local / tooling
 .playwright-mcp/
+.claude/
 
 # Local data (dashboard writes here)
 learning/action-logs.jsonl

@@ -10,7 +10,7 @@ import re
 from datetime import datetime, UTC
 from urllib.parse import parse_qs, urlparse
 
-from learningManager import cmd_promote, cmd_review, entries_path, load_lines, parse_entries
+from learningManager import cmd_promote, cmd_promote_into_existing, cmd_review, entries_path, load_lines, parse_entries
 
 
 FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
@@ -31,6 +31,32 @@ def build_dashboard(repo_dir: Path, limit: int) -> dict:
     rejected = [x for x in all_entries if (x["entry"].status or "").strip() == "rejected"]
     promoted = [x for x in all_entries if (x["entry"].status or "").strip() == "promoted"]
 
+    def suggest_promotion(entry) -> dict:
+        title = (entry.title or "").lower()
+        details = (entry.details or "").lower()
+        text = f"{title} {details}"
+
+        if any(token in text for token in ["typescript", "type safety", "strict mode", "discriminated union"]):
+            return {"mode": "existing", "skillSlug": "typescript-best-practices", "target": "skills"}
+        if any(token in text for token in ["test", "testing", "regression", "integration", "unit test"]):
+            return {"mode": "existing", "skillSlug": "testing-patterns", "target": "skills"}
+        if any(token in text for token in ["security", "auth", "authorization", "token", "permission"]):
+            return {"mode": "existing", "skillSlug": "security-best-practices", "target": "skills"}
+        if any(token in text for token in ["validate", "validation", "sanitize", "sanitization", "input"]):
+            return {"mode": "existing", "skillSlug": "validation-input-sanitization", "target": "skills"}
+        if any(token in text for token in ["error", "logging", "logger", "exception"]):
+            return {"mode": "existing", "skillSlug": "error-handling-logging", "target": "skills"}
+        if any(token in text for token in ["api", "rest", "endpoint", "http"]):
+            return {"mode": "existing", "skillSlug": "api-design-restful", "target": "skills"}
+        if any(token in text for token in ["commit", "branch", "pull request", "git workflow"]):
+            return {"mode": "existing", "skillSlug": "git-workflow", "target": "skills"}
+        if any(token in text for token in ["camelcase", "camel case", "naming", "identifier"]):
+            return {"mode": "existing", "skillSlug": "personal-camelcase-preference", "target": "skills"}
+        if any(token in text for token in ["async", "await", "promise", "concurrency", "race condition", "mutex", "queue", "background job"]):
+            return {"mode": "existing", "skillSlug": "async-concurrency", "target": "skills"}
+
+        return {"mode": "existing", "skillSlug": "master-engineering-standards", "target": "skills"}
+
     def serialize(items: list[dict], item_limit: int | None = None) -> list[dict]:
         records = items if item_limit is None else items[:item_limit]
         return [
@@ -42,6 +68,7 @@ def build_dashboard(repo_dir: Path, limit: int) -> dict:
                 "status": x["entry"].status,
                 "details": x["entry"].details,
                 "reviewNote": x["entry"].review_note,
+                "promotionSuggestion": suggest_promotion(x["entry"]),
             }
             for x in records
         ]
@@ -76,9 +103,10 @@ def parse_skill_frontmatter(skill_text: str) -> dict:
 
 def build_skills(repo_dir: Path) -> dict:
     roots = [
-        ("cursor", repo_dir / "cursor" / "skills"),
-        ("cursor-custom", repo_dir / "cursor" / "skills-cursor"),
+        ("skills", repo_dir / "skills"),
+        ("cursor", repo_dir / "cursor" / "skills-cursor"),
         ("codex", repo_dir / "codex" / "skills"),
+        ("claude", repo_dir / "claude" / "skills"),
     ]
     skills: list[dict] = []
 
@@ -208,9 +236,8 @@ class LearningUiHandler(BaseHTTPRequestHandler):
 
         # Static files under /css/ and /js/ from ui/
         if parsed.path.startswith("/css/") or parsed.path.startswith("/js/"):
-            safe_path = parsed.path.lstrip("/").replace("..", "")
-            file_path = (self.repo_dir / "ui" / safe_path).resolve()
             ui_root = (self.repo_dir / "ui").resolve()
+            file_path = (ui_root / parsed.path.lstrip("/")).resolve()
             try:
                 file_path.relative_to(ui_root)
             except ValueError:
@@ -250,6 +277,16 @@ class LearningUiHandler(BaseHTTPRequestHandler):
                     fingerprint=payload["fingerprint"],
                     slug=payload["slug"],
                     description=payload["description"],
+                    target=payload.get("target", "skills"),
+                )
+                self._send_json({"ok": True})
+                return
+            if parsed.path == "/api/promote-into-existing":
+                cmd_promote_into_existing(
+                    repo_dir=self.repo_dir,
+                    source=payload["source"],
+                    fingerprint=payload["fingerprint"],
+                    skill_slug=payload["skillSlug"],
                     target=payload.get("target", "skills"),
                 )
                 self._send_json({"ok": True})

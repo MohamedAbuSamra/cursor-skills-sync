@@ -14,8 +14,10 @@ check() {
   fi
 }
 
-echo "Verifying cursor-skills-sync setup..."
+echo "Verifying ai-agent-skills-sync setup..."
+check "test -d \"$REPO_DIR/skills\" && test \"\$(ls -A \"$REPO_DIR/skills\" 2>/dev/null)\"" "skills exists and has content"
 check "test -d \"$HOME/.cursor/skills\" && test \"\$(ls -A \"$HOME/.cursor/skills\" 2>/dev/null)\"" "~/.cursor/skills exists and has content"
+check "test -f \"$HOME/.claude/CLAUDE.md\"" "~/.claude/CLAUDE.md installed"
 check "test -f \"$REPO_DIR/.git/hooks/pre-commit\"" "pre-commit hook installed"
 check "test -f \"$REPO_DIR/.git/hooks/post-commit\"" "post-commit hook installed"
 SKILL_COUNT=$(find "$HOME/.cursor/skills" -name "SKILL.md" 2>/dev/null | wc -l)

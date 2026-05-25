@@ -1,4 +1,4 @@
-# cursor-skills-sync
+# ai-agent-skills-sync
 
 Sync your Cursor/Codex skills across machines with GitHub.
 
@@ -7,8 +7,8 @@ Sync your Cursor/Codex skills across machines with GitHub.
 **macOS / Linux**
 
 ```bash
-git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
-cd cursor-skills-sync
+git clone https://github.com/MohamedAbuSamra/ai-agent-skills-sync.git
+cd ai-agent-skills-sync
 chmod +x ./setup.sh
 ./setup.sh
 ```
@@ -18,8 +18,8 @@ Then **restart Cursor**. Skills from this repo are now active.
 **Windows (PowerShell)**
 
 ```powershell
-git clone https://github.com/MohamedAbuSamra/cursor-skills-sync.git
-cd cursor-skills-sync
+git clone https://github.com/MohamedAbuSamra/ai-agent-skills-sync.git
+cd ai-agent-skills-sync
 .\setup.ps1
 ```
 
@@ -29,11 +29,79 @@ Then **restart Cursor**.
 
 ## What this repo contains
 
-- `cursor/skills/` -> custom Cursor skills
-- `cursor/skills-cursor/` -> Cursor helper skills
+- `skills/` -> cross-agent engineering skills used by all AI agents
+- `cursor/skills-cursor/` -> Cursor-specific helper skills
 - `codex/skills/` -> Codex skills
+- `claude/skills/` -> Claude Code-specific skills
+- `claude/CLAUDE.md` -> global Claude Code rules (synced to `~/.claude/CLAUDE.md`)
 - `learning/manual/` -> manually captured learnings
 - `learning/generated/` -> AI-generated learnings
+- `PROJECT-BOOTSTRAP.md` -> short portable start-of-work contract for any repo
+
+## Portable bootstrap
+
+If you want a fast, repo-local file to inspect at the start of work, use `PROJECT-BOOTSTRAP.md`.
+
+It is designed to be:
+
+- short enough to inspect quickly
+- portable across repos and chats
+- stable enough to act as your default engineering baseline
+
+Use it before falling back to longer prompts or deeper skill files.
+
+## Automated repo bootstrap
+
+If you want new repos to start from your style automatically, stamp local instruction files into them:
+
+```bash
+./scripts/install-repo-bootstrap.sh /absolute/path/to/target-repo
+```
+
+PowerShell:
+
+```powershell
+.\scripts\install-repo-bootstrap.ps1 -TargetDir C:\path\to\target-repo
+```
+
+This creates:
+
+- `copilot-instructions.md`
+- `AGENTS.md`
+- `CLAUDE.md`
+
+That gives each target repo a local instruction surface for all AI agents.
+
+## Skill layout
+
+Skills are split by scope:
+
+- **`skills/`** — cross-agent standards. Every AI agent in this repo uses these. New skills that should apply everywhere go here.
+- **`cursor/skills-cursor/`** — Cursor-specific workflow skills
+- **`claude/skills/`** — Claude Code-specific skills
+- **`codex/skills/`** — Codex/OpenAI skills
+
+Adding a new AI agent: create `<agent>/skills/`, wire it in `sync.sh`, `sync.ps1`, `validateSkills.sh`, and `learningUiServer.py`.
+
+Recommended global baseline (all in `skills/`):
+
+- `master-engineering-standards`
+- `always-apply-standards`
+- `modern-development-practices`
+- `testing-patterns`
+- `security-best-practices`
+- `typescript-best-practices`
+
+Examples of conditional reusable skills (all in `skills/`):
+
+- `api-design-restful`
+- `error-handling-logging`
+- `validation-input-sanitization`
+- `dry-solid-principles`
+- `performance-optimization`
+- `database-data-modeling`
+
+See `SKILL-AUDIT.md` for the full classification.
 
 ## How it works across projects
 
@@ -42,17 +110,17 @@ Then **restart Cursor**.
 
   ```bash
   # From any folder (replace with your actual path):
-  ~/cursor-skills-sync/record-learning.sh generated "Title" "What you learned"
+  ~/ai-agent-skills-sync/record-learning.sh generated "Title" "What you learned"
   ```
 
   Optional alias (add to `~/.zshrc` or `~/.bashrc`):
 
   ```bash
-  alias log-learning='~/cursor-skills-sync/record-learning.sh'
+  alias log-learning='~/ai-agent-skills-sync/record-learning.sh'
   # Then from any project: log-learning generated "Title" "Details"
   ```
 
-  Then `git pull` / `git push` from the cursor-skills-sync repo to sync learnings across machines.
+  Then `git pull` / `git push` from the ai-agent-skills-sync repo to sync learnings across machines.
 
 ## Important difference: learning vs skills
 
@@ -133,6 +201,14 @@ Promote approved learning into a real skill:
 ./scripts/promote-learning.sh generated <fingerprint> my-skill-slug "Short skill description" skills
 ```
 
+Promote approved learning into an existing skill:
+
+```bash
+./scripts/promote-learning-into-existing.sh generated <fingerprint> master-engineering-standards skills
+```
+
+In the local web UI, each learning now includes a suggested target skill and a one-click action to promote into that existing skill.
+
 PowerShell equivalents:
 
 ```powershell
@@ -140,6 +216,7 @@ PowerShell equivalents:
 .\scripts\run-learning-ui.ps1 -Port 8765
 .\scripts\review-learning.ps1 -Source generated -Fingerprint <fingerprint> -Status approved -Reason "validated in 3 tasks"
 .\scripts\promote-learning.ps1 -Source generated -Fingerprint <fingerprint> -Slug my-skill-slug -Description "Short skill description" -Target skills
+.\scripts\promote-learning-into-existing.ps1 -Source generated -Fingerprint <fingerprint> -SkillSlug master-engineering-standards -Target skills
 ```
 
 ## Learning flow (manual vs generated)
@@ -172,6 +249,20 @@ Built-in behavior:
 ## Promote a learning into a skill
 
 1. Pick a validated entry from `learning/manual/entries.md` or `learning/generated/entries.md`.
-2. Create/update a folder under `cursor/skills/` or `cursor/skills-cursor/`.
+2. Create/update a folder under `skills/` (cross-agent) or the relevant agent folder (`cursor/skills-cursor/`, `claude/skills/`, etc.).
 3. Add or update `SKILL.md` with clear instructions and examples.
 4. Commit and push.
+
+For cross-agent guidance, prefer extending `skills/master-engineering-standards/` or adding a new skill under `skills/`.
+
+For a quick start in any repo, inspect `PROJECT-BOOTSTRAP.md` first.
+
+## Automation limits
+
+This repo can automate review and promotion suggestions inside its own scripts and local UI, but it cannot force every future chat host to auto-run promotion logic on startup.
+
+Practical default:
+
+- global user agent reminds the assistant to suggest promotion opportunities
+- local learning UI suggests a target skill automatically
+- one-click promotion into an existing skill is available from the UI

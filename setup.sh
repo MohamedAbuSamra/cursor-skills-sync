@@ -5,7 +5,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$REPO_DIR"
 
-echo "Setting up cursor-skills-sync..."
+echo "Setting up ai-agent-skills-sync..."
 chmod +x ./sync.sh
 chmod +x ./record-learning.sh
 chmod +x ./scripts/installHooks.sh
@@ -14,6 +14,7 @@ chmod +x ./scripts/run-learning-ui.sh
 chmod +x ./scripts/learning-dashboard.sh
 chmod +x ./scripts/review-learning.sh
 chmod +x ./scripts/promote-learning.sh
+chmod +x ./scripts/install-repo-bootstrap.sh
 
 ./sync.sh to-local
 echo ""
@@ -25,4 +26,6 @@ chmod +x ./verify.sh
 ./verify.sh
 echo ""
 echo "Done. Restart Cursor so it picks up the skills."
+echo "Claude Code global rules installed at: $HOME/.claude/CLAUDE.md"
 echo "Optional: run ./scripts/run-learning-ui.sh 8765 and open http://127.0.0.1:8765 for the learning dashboard."
+echo "Optional: run ./scripts/install-repo-bootstrap.sh /path/to/another-repo to stamp local instruction files into a project."

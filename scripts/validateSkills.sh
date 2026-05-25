@@ -13,9 +13,10 @@ import sys
 
 repo_dir = Path(os.environ.get("repoDir", ".")).resolve()
 skill_roots = [
-    repo_dir / "cursor" / "skills",
+    repo_dir / "skills",
     repo_dir / "cursor" / "skills-cursor",
     repo_dir / "codex" / "skills",
+    repo_dir / "claude" / "skills",
 ]
 
 skill_files = []

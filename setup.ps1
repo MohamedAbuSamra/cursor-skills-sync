@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 $repoDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $repoDir
 
-Write-Host "Setting up cursor-skills-sync..."
+Write-Host "Setting up ai-agent-skills-sync..."
 .\sync.ps1 to-local
 Write-Host ""
 Write-Host "To install git hooks (optional), run in Git Bash: ./scripts/installHooks.sh"

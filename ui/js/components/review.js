@@ -52,6 +52,9 @@ export function renderQueue() {
   queue.innerHTML = state.visibleEntries
     .map((item, index) => {
       const stage = toStage(item.status);
+      const suggestion = item.promotionSuggestion ?? null;
+      const suggestedSkill = suggestion?.skillSlug ?? "master-engineering-standards";
+      const suggestedTarget = suggestion?.target ?? "skills";
       return `
         <article class="entry">
           <div class="entryTop">
@@ -60,6 +63,7 @@ export function renderQueue() {
           </div>
           <div class="meta">${escapeHtml(item.details ?? "")}</div>
           <div class="meta">source: ${escapeHtml(item.source)} | reason: ${escapeHtml(item.reviewNote ?? "-")}</div>
+          <div class="meta">promotion suggestion: ${escapeHtml(suggestedSkill)} (${escapeHtml(suggestedTarget)})</div>
 
           <div class="actions">
             <select id="stage-${index}">
@@ -72,11 +76,12 @@ export function renderQueue() {
             <button type="button" class="secondary" data-promote-toggle data-index="${index}">Promote</button>
           </div>
           <div class="promotePanel" id="promote-${index}">
+            <button type="button" class="secondary" data-promote-existing data-index="${index}">Promote Into Suggested Skill</button>
             <input id="slug-${index}" placeholder="skill-slug" />
             <input id="desc-${index}" placeholder="short skill description" />
             <select id="target-${index}">
-              <option value="skills">skills</option>
-              <option value="skills-cursor">skills-cursor</option>
+              <option value="skills" ${suggestedTarget === "skills" ? "selected" : ""}>skills</option>
+              <option value="skills-cursor" ${suggestedTarget === "skills-cursor" ? "selected" : ""}>skills-cursor</option>
             </select>
             <button data-promote-submit data-index="${index}">Create Skill</button>
           </div>
@@ -166,5 +171,40 @@ export async function promote(index) {
     }),
   });
   setMessage("Learning promoted to skill.");
+  return true;
+}
+
+export async function promoteIntoExisting(index) {
+  const item = state.visibleEntries[index];
+  if (!item) return false;
+  const suggestion = item.promotionSuggestion ?? { skillSlug: "master-engineering-standards", target: "skills" };
+  const res = await fetch("/api/promote-into-existing", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      source: item.source,
+      fingerprint: item.fingerprint,
+      skillSlug: suggestion.skillSlug,
+      target: suggestion.target,
+    }),
+  });
+  const payload = await res.json();
+  if (!payload.ok) {
+    setMessage(`Error: ${payload.error ?? "promote into existing failed"}`);
+    return false;
+  }
+  await fetch("/api/log", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      type: "promote",
+      title: item.title ?? "",
+      source: item.source,
+      status: "promoted",
+      reason: `Promoted into ${suggestion.skillSlug}`,
+      skillPath: `${suggestion.target}/${suggestion.skillSlug}/SKILL.md`,
+    }),
+  });
+  setMessage(`Learning promoted into ${suggestion.skillSlug}.`);
   return true;
 }

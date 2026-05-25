@@ -10,6 +10,7 @@ import {
   togglePromote,
   saveReview,
   promote,
+  promoteIntoExisting,
 } from "./components/review.js";
 import {
   renderSkillsExplorer,
@@ -62,6 +63,12 @@ function bindEvents() {
     if (promoteBtn) {
       const index = promoteBtn.getAttribute("data-index");
       if (index != null) promote(Number(index)).then((ok) => ok && loadData());
+      return;
+    }
+    const promoteExistingBtn = e.target.closest("[data-promote-existing]");
+    if (promoteExistingBtn) {
+      const index = promoteExistingBtn.getAttribute("data-index");
+      if (index != null) promoteIntoExisting(Number(index)).then((ok) => ok && loadData());
       return;
     }
   });

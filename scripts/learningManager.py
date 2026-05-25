@@ -140,9 +140,11 @@ def safe_slug(value: str) -> str:
 
 def skill_dir(repo_dir: Path, target: str, slug: str) -> Path:
     if target == "skills":
-        return repo_dir / "cursor" / "skills" / slug
+        return repo_dir / "skills" / slug
     if target == "skills-cursor":
         return repo_dir / "cursor" / "skills-cursor" / slug
+    if target == "claude":
+        return repo_dir / "claude" / "skills" / slug
     raise ValueError(f"Unsupported target: {target}")
 
 
@@ -154,13 +156,22 @@ description: {description}
 
 # {title}
 
-Use this skill when this pattern applies in daily work.
+Use this skill when this pattern applies in daily work and the guidance is reusable beyond a single task.
 
 ## Guidance
 
+- Apply the pattern intentionally and only where it improves the result.
 - Keep the implementation concise and consistent with project conventions.
-- Apply the pattern intentionally; avoid using it where it does not fit.
-- Add examples in this skill over time as usage matures.
+- Prefer updating existing code and workflows instead of adding parallel patterns.
+
+## When to use
+
+- Use when the task clearly matches this pattern.
+- Do not use when a more specific existing skill already covers the case.
+
+## Example
+
+- Example scenario: replace this placeholder with a concrete example from real work before relying on the skill heavily.
 
 ## Source
 
@@ -168,6 +179,18 @@ Use this skill when this pattern applies in daily work.
 - original details: {details}
 """
     path.write_text(body, encoding="utf-8")
+
+
+def append_to_existing_skill(path: Path, title: str, details: str, fingerprint: str) -> None:
+    existing = path.read_text(encoding="utf-8")
+    addition = f"""
+
+## Promoted learning: {title}
+
+- learning fingerprint: `{fingerprint}`
+- guidance: {details}
+"""
+    path.write_text(existing.rstrip() + addition, encoding="utf-8")
 
 
 def cmd_promote(
@@ -217,6 +240,47 @@ def cmd_promote(
     print(f"Promoted learning to {destination_file.relative_to(repo_dir)}")
 
 
+def cmd_promote_into_existing(
+    repo_dir: Path,
+    source: str,
+    fingerprint: str,
+    skill_slug: str,
+    target: str,
+) -> None:
+    entries_file = entries_path(repo_dir, source)
+    lines = load_lines(entries_file)
+    entries = parse_entries(lines)
+    entry = find_entry_by_fingerprint(entries, fingerprint)
+
+    if entry.status not in {"approved", "promoted"}:
+        raise ValueError(
+            f"Entry status must be 'approved' before promotion. Current status: {entry.status!r}"
+        )
+
+    normalized_slug = safe_slug(skill_slug)
+    destination_dir = skill_dir(repo_dir, target, normalized_slug)
+    destination_file = destination_dir / "SKILL.md"
+
+    if not destination_file.exists():
+        raise ValueError(f"Skill does not exist at {destination_file}")
+
+    append_to_existing_skill(
+        path=destination_file,
+        title=entry.title,
+        details=entry.details or "",
+        fingerprint=fingerprint,
+    )
+
+    lines = load_lines(entries_file)
+    entries = parse_entries(lines)
+    entry = find_entry_by_fingerprint(entries, fingerprint)
+    update_or_insert_kv(lines, entry, "status", "promoted")
+    update_or_insert_kv(lines, entry, "reviewNote", f"Promoted into {destination_file.relative_to(repo_dir)}")
+    save_lines(entries_file, lines)
+
+    print(f"Promoted learning into {destination_file.relative_to(repo_dir)}")
+
+
 def cmd_dashboard(repo_dir: Path, limit: int) -> None:
     manual_file = entries_path(repo_dir, "manual")
     generated_file = entries_path(repo_dir, "generated")
@@ -262,7 +326,13 @@ def build_parser() -> argparse.ArgumentParser:
     promote.add_argument("--fingerprint", required=True)
     promote.add_argument("--slug", required=True)
     promote.add_argument("--description", required=True)
-    promote.add_argument("--target", choices=["skills", "skills-cursor"], default="skills")
+    promote.add_argument("--target", choices=["skills", "skills-cursor", "claude"], default="skills")
+
+    promote_existing = sub.add_parser("promote-into-existing", help="Promote approved learning into an existing SKILL.md")
+    promote_existing.add_argument("--source", choices=["manual", "generated"], required=True)
+    promote_existing.add_argument("--fingerprint", required=True)
+    promote_existing.add_argument("--skill-slug", required=True)
+    promote_existing.add_argument("--target", choices=["skills", "skills-cursor", "claude"], default="skills")
 
     dashboard = sub.add_parser("dashboard", help="Show learning status summary")
     dashboard.add_argument("--limit", type=int, default=10)
@@ -285,6 +355,14 @@ def main() -> int:
                 fingerprint=args.fingerprint,
                 slug=args.slug,
                 description=args.description,
+                target=args.target,
+            )
+        elif args.command == "promote-into-existing":
+            cmd_promote_into_existing(
+                repo_dir=repo_dir,
+                source=args.source,
+                fingerprint=args.fingerprint,
+                skill_slug=args.skill_slug,
                 target=args.target,
             )
         elif args.command == "dashboard":
